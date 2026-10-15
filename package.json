@@ -1,0 +1,27 @@
+{
+  "name": "@ycab/loading-screen",
+  "version": "1.0.0",
+  "description": "YCAB loading screens (iserve, values, logo) as one framework-agnostic web component: <ycab-loader>.",
+  "main": "dist/ycab-loader.js",
+  "module": "dist/ycab-loader.mjs",
+  "types": "dist/ycab-loader.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/ycab-loader.d.ts",
+      "import": "./dist/ycab-loader.mjs",
+      "default": "./dist/ycab-loader.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "sideEffects": true,
+  "scripts": {
+    "build": "node scripts/build.mjs"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/YCAB-Foundation/loading-screen.git"
+  },
+  "license": "UNLICENSED"
+}
