@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Sample Loading Screen</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --red: #ed1c24;
+      --ink: #141414;
+      --muted: #5c6570;
+      --line: #e3e6eb;
+      --page: #eceff3;
+      --card: #ffffff;
+      --light-stage: #f4f5f7;
+      --dark-stage: #0b0f17;
+      --dark-card: #141922;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: "Segoe UI", Helvetica, Arial, sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(900px 420px at 10% -10%, rgba(237, 28, 36, 0.08), transparent 60%),
+        var(--page);
+    }
+
+    .page {
+      width: min(1180px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 28px 0 40px;
+    }
+
+    .page-head h1 {
+      margin: 0;
+      font-size: 28px;
+      letter-spacing: -0.03em;
+    }
+
+    .page-head p {
+      margin: 8px 0 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .compare {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin-top: 22px;
+      align-items: stretch;
+    }
+
+    .panel {
+      display: flex;
+      flex-direction: column;
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      overflow: hidden;
+      box-shadow: 0 16px 40px rgba(20, 24, 32, 0.06);
+    }
+
+    .panel-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 16px 18px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .kicker {
+      margin: 0;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--red);
+    }
+
+    .panel-head h2 {
+      margin: 2px 0 0;
+      font-size: 18px;
+      letter-spacing: -0.02em;
+    }
+
+    .seg {
+      display: inline-flex;
+      padding: 3px;
+      border-radius: 999px;
+      background: #f1f3f6;
+      border: 1px solid var(--line);
+      flex: none;
+    }
+
+    .seg button {
+      appearance: none;
+      border: 0;
+      background: transparent;
+      color: #4b5563;
+      font: inherit;
+      font-size: 13px;
+      font-weight: 650;
+      padding: 7px 12px;
+      border-radius: 999px;
+      cursor: pointer;
+    }
+
+    .seg button[aria-pressed="true"] {
+      background: #fff;
+      color: var(--ink);
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+    }
+
+    .viewport {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 460px;
+      padding: 28px 20px 32px;
+      background: var(--light-stage);
+      transition: background-color 0.35s ease;
+    }
+
+    .panel[data-theme="dark"] .viewport {
+      background: var(--dark-stage);
+    }
+
+    .loader {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .logo-box {
+      position: relative;
+      width: 300px;
+      max-width: 100%;
+      aspect-ratio: 540 / 480;
+    }
+
+    .logo-box img {
+      position: absolute;
+      display: block;
+      user-select: none;
+      -webkit-user-drag: none;
+    }
+
+    .wordmark {
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: fill;
+    }
+
+    .panel[data-theme="dark"] .wordmark {
+      filter: brightness(0) invert(1);
+    }
+
+    .ornament {
+      opacity: 0.3;
+      transition: opacity 0.18s ease-out;
+    }
+
+    .ornament.is-active {
+      opacity: 1;
+    }
+
+    .status {
+      margin: 22px 0 0;
+      font-size: 14px;
+      font-weight: 650;
+      color: #4d4d4d;
+    }
+
+    .panel[data-theme="dark"] .status {
+      color: #e5e7eb;
+    }
+
+    .value-card {
+      position: relative;
+      width: min(100%, 420px);
+      padding: 40px 36px 32px;
+      border-radius: 24px;
+      background: #fff;
+      color: #0f172a;
+      border: 1px solid rgba(226, 232, 240, 0.9);
+      box-shadow: 0 18px 40px rgba(15, 23, 42, 0.08);
+      overflow: hidden;
+      user-select: none;
+      transition: background-color 0.5s ease, color 0.5s ease, border-color 0.5s ease;
+    }
+
+    .panel[data-theme="dark"] .value-card {
+      background: var(--dark-card);
+      color: #f8fafc;
+      border-color: rgba(255, 255, 255, 0.08);
+      box-shadow: none;
+    }
+
+    .glow-bg {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      opacity: 0.2;
+      background: radial-gradient(circle at 50% 42%, var(--red) 0%, transparent 68%);
+      transition: opacity 0.7s ease;
+    }
+
+    .stage {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 190px;
+    }
+
+    .aura {
+      position: absolute;
+      width: 176px;
+      height: 176px;
+      border-radius: 999px;
+      pointer-events: none;
+      background: var(--red);
+      filter: blur(28px);
+      animation: aura 2.2s ease-in-out infinite;
+    }
+
+    .icon-slot {
+      position: relative;
+      width: 144px;
+      height: 144px;
+      overflow: hidden;
+    }
+
+    .icon-layer {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      filter: drop-shadow(0 6px 8px rgba(15, 23, 42, 0.12));
+    }
+
+    .icon-layer.enter { animation: slide-in 0.35s cubic-bezier(0.16, 1, 0.3, 1) both; }
+    .icon-layer.exit { animation: slide-out 0.22s ease-in both; }
+
+    .icon-float {
+      width: 144px;
+      height: 144px;
+      animation: float 2.6s ease-in-out infinite;
+    }
+
+    .icon-float img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      display: block;
+    }
+
+    .title-slot {
+      position: relative;
+      z-index: 1;
+      margin-top: 18px;
+      min-height: 36px;
+      text-align: center;
+    }
+
+    .title-slot h3 {
+      margin: 0;
+      font-size: 22px;
+      letter-spacing: -0.03em;
+    }
+
+    .title-slot .enter { animation: title-in 0.25s ease both; }
+
+    @keyframes aura {
+      0%, 100% { transform: scale(1); opacity: 0.15; }
+      50% { transform: scale(1.08); opacity: 0.3; }
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(-3px); }
+      50% { transform: translateY(3px); }
+    }
+
+    @keyframes slide-in {
+      from { transform: translateX(60px) scale(0.88); opacity: 0; }
+      to { transform: none; opacity: 1; }
+    }
+
+    @keyframes slide-out {
+      from { transform: none; opacity: 1; }
+      to { transform: translateX(-60px) scale(0.88); opacity: 0; }
+    }
+
+    @keyframes title-in {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: none; }
+    }
+
+    .iserve-card {
+      width: min(100%, 420px);
+      padding: 36px 24px 28px;
+      border-radius: 24px;
+      background: #fff;
+      color: #0f172a;
+      border: 1px solid rgba(226, 232, 240, 0.9);
+      box-shadow: 0 18px 40px rgba(15, 23, 42, 0.08);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      font-family: "Nunito", "Segoe UI", sans-serif;
+      user-select: none;
+      transition: background-color 0.5s ease, color 0.5s ease, border-color 0.5s ease;
+    }
+
+    .panel[data-theme="dark"] .iserve-card {
+      background: var(--dark-card);
+      color: #f8fafc;
+      border-color: rgba(255, 255, 255, 0.08);
+      box-shadow: none;
+    }
+
+    .iserve-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      width: 100%;
+      padding: 16px 0;
+    }
+
+    .iserve-icon {
+      width: 44px;
+      height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex: none;
+      opacity: 0.3;
+      transform: scale(0.92) translateY(0);
+      transition: opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1), transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .iserve-icon.is-active {
+      opacity: 1;
+      transform: scale(1.15) translateY(-4px);
+    }
+
+    .iserve-icon img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      display: block;
+      user-select: none;
+      -webkit-user-drag: none;
+    }
+
+    .iserve-brand {
+      margin: 16px 0 0;
+      font-size: 30px;
+      font-weight: 800;
+      letter-spacing: 0.25em;
+      line-height: 1;
+      text-align: center;
+      color: #4d4d4d;
+    }
+
+    .iserve-letter {
+      color: #4d4d4d;
+      transition: color 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .iserve-letter.is-active {
+      color: var(--red);
+    }
+
+    .panel[data-theme="dark"] .iserve-letter {
+      color: #a3a3a3;
+    }
+
+    .panel[data-theme="dark"] .iserve-letter.is-active {
+      color: var(--red);
+    }
+
+    .iserve-label {
+      min-height: 24px;
+      margin: 8px 0 0;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      color: var(--red);
+      text-align: center;
+    }
+
+    .iserve-label.enter { animation: iserve-label-in 0.2s ease both; }
+
+    @keyframes iserve-label-in {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: none; }
+    }
+
+    @media (max-width: 860px) {
+      .compare { grid-template-columns: 1fr; }
+      .panel { min-height: 0; }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header class="page-head">
+      <h1>Sample loading screen</h1>
+    </header>
+
+    <section class="compare">
+      <article class="panel" id="screen-1" data-theme="light">
+        <header class="panel-head">
+          <div>
+            <p class="kicker">Screen 1</p>
+            <h2>Logo</h2>
+          </div>
+          <div class="seg" role="group" aria-label="Mode Screen 1">
+            <button type="button" data-mode="light" aria-pressed="true">Light</button>
+            <button type="button" data-mode="dark" aria-pressed="false">Dark</button>
+          </div>
+        </header>
+        <div class="viewport">
+          <div class="loader" role="status" aria-live="polite" aria-label="Loading">
+            <div class="logo-box" id="logo-box">
+              <img class="wordmark" src="assets/wordmark.png" alt="" />
+            </div>
+            <p class="status">Loading…</p>
+          </div>
+        </div>
+      </article>
+
+      <article class="panel" id="screen-2" data-theme="light">
+        <header class="panel-head">
+          <div>
+            <p class="kicker">Screen 2</p>
+            <h2>Ikon nilai</h2>
+          </div>
+          <div class="seg" role="group" aria-label="Mode Screen 2">
+            <button type="button" data-mode="light" aria-pressed="true">Light</button>
+            <button type="button" data-mode="dark" aria-pressed="false">Dark</button>
+          </div>
+        </header>
+        <div class="viewport">
+          <div class="value-card" role="status" aria-live="polite" aria-label="Loading">
+            <div class="glow-bg"></div>
+            <div class="stage">
+              <div class="aura"></div>
+              <div class="icon-slot" id="icon-slot"></div>
+            </div>
+            <div class="title-slot" id="title-slot"></div>
+          </div>
+        </div>
+      </article>
+
+      <article class="panel" id="screen-3" data-theme="light">
+        <header class="panel-head">
+          <div>
+            <p class="kicker">Screen 3</p>
+            <h2>I-SERVE</h2>
+          </div>
+          <div class="seg" role="group" aria-label="Mode Screen 3">
+            <button type="button" data-mode="light" aria-pressed="true">Light</button>
+            <button type="button" data-mode="dark" aria-pressed="false">Dark</button>
+          </div>
+        </header>
+        <div class="viewport">
+          <div class="iserve-card" role="status" aria-live="polite" aria-label="Loading">
+            <div class="iserve-row" id="iserve-row"></div>
+            <h3 class="iserve-brand" id="iserve-brand"></h3>
+            <p class="iserve-label" id="iserve-label"></p>
+          </div>
+        </div>
+      </article>
+    </section>
+  </main>
+
+  <script>
+    const ORNAMENTS = [
+      { name: "Panah/Rumah", src: "assets/ornament-01-panah-rumah.png", left: 15.193, top: 18.325, width: 16.703, height: 16.101 },
+      { name: "Morph 1", src: "assets/ornament-02-morph-1.png", left: 31.897, top: 4.118, width: 20.065, height: 20.098 },
+      { name: "Love Miring", src: "assets/ornament-03-love-miring.png", left: 58.065, top: 3.537, width: 23.945, height: 27.092 },
+      { name: "Love Penuh", src: "assets/ornament-04-love-penuh.png", left: 66.303, top: 31.245, width: 32.963, height: 34.385 },
+      { name: "Love Bawah", src: "assets/ornament-05-love-bawah.png", left: 60.472, top: 71.227, width: 25.624, height: 25.463 },
+      { name: "Buku Bawah", src: "assets/ornament-06-buku-bawah.png", left: 38.404, top: 83.468, width: 19.147, height: 15.614 },
+      { name: "Buku Kiri", src: "assets/ornament-07-buku-kiri.png", left: 19.657, top: 74.137, width: 16.383, height: 12.897 },
+    ];
+
+    const STEPS = [
+      { id: 1, letter: "I", name: "Integrity", file: "1.png", src: "assets/icon-integrity.png" },
+      { id: 2, letter: "S", name: "Service", file: "2.png", src: "assets/icon-service.png" },
+      { id: 3, letter: "E", name: "Empathy", file: "3.png", src: "assets/icon-empathy.png" },
+      { id: 4, letter: "R", name: "Resilience", file: "4.png", src: "assets/icon-resilience.png" },
+      { id: 5, letter: "V", name: "Vibrancy", file: "5.png", src: "assets/icon-vibrancy.png" },
+      { id: 6, letter: "E", name: "Excellence", file: "6.png", src: "assets/icon-excellence.png" },
+    ];
+
+    const logoBox = document.getElementById("logo-box");
+    ORNAMENTS.forEach((item) => {
+      const img = document.createElement("img");
+      img.className = "ornament";
+      img.src = item.src;
+      img.alt = "";
+      img.title = item.name;
+      img.style.left = item.left + "%";
+      img.style.top = item.top + "%";
+      img.style.width = item.width + "%";
+      img.style.height = item.height + "%";
+      logoBox.appendChild(img);
+    });
+
+    const ornamentNodes = [...logoBox.querySelectorAll(".ornament")];
+    let activeOrnament = 0;
+    function paintOrnament() {
+      ornamentNodes.forEach((node, index) => {
+        node.classList.toggle("is-active", index === activeOrnament);
+      });
+    }
+    paintOrnament();
+    setInterval(() => {
+      activeOrnament = (activeOrnament + 1) % ornamentNodes.length;
+      paintOrnament();
+    }, 440);
+
+    const iconSlot = document.getElementById("icon-slot");
+    const titleSlot = document.getElementById("title-slot");
+    const STEP_MS = 800;
+    const EXIT_MS = 220;
+    let currentStep = -1;
+    let iconToken = 0;
+
+    function showStep(step) {
+      const token = ++iconToken;
+      const data = STEPS[step];
+      const previous = iconSlot.querySelector(".icon-layer");
+
+      const mount = () => {
+        if (token !== iconToken) return;
+        iconSlot.replaceChildren();
+        const layer = document.createElement("div");
+        layer.className = "icon-layer enter";
+        layer.innerHTML = '<div class="icon-float"><img alt="" /></div>';
+        layer.querySelector("img").src = data.src;
+        iconSlot.appendChild(layer);
+
+        titleSlot.replaceChildren();
+        const heading = document.createElement("h3");
+        heading.className = "enter";
+        heading.textContent = data.name;
+        titleSlot.appendChild(heading);
+      };
+
+      if (!previous) {
+        mount();
+        return;
+      }
+
+      previous.classList.remove("enter");
+      previous.classList.add("exit");
+      let settled = false;
+      const finish = () => {
+        if (settled) return;
+        settled = true;
+        mount();
+      };
+      previous.addEventListener("animationend", (event) => {
+        if (event.target !== previous || event.animationName !== "slide-out") return;
+        finish();
+      });
+      window.setTimeout(finish, EXIT_MS + 40);
+    }
+
+    const iserveRow = document.getElementById("iserve-row");
+    const iserveBrand = document.getElementById("iserve-brand");
+    const iserveLabel = document.getElementById("iserve-label");
+    const BRAND = [
+      { char: "I", step: 0 },
+      { char: "-" },
+      { char: "S", step: 1 },
+      { char: "E", step: 2 },
+      { char: "R", step: 3 },
+      { char: "V", step: 4 },
+      { char: "E", step: 5 },
+    ];
+    BRAND.forEach((item) => {
+      const letter = document.createElement("span");
+      letter.className = "iserve-letter";
+      letter.textContent = item.char;
+      if (item.step !== undefined) letter.dataset.step = String(item.step);
+      iserveBrand.appendChild(letter);
+    });
+    const iserveLetters = [...iserveBrand.children];
+    STEPS.forEach((item) => {
+      const icon = document.createElement("div");
+      icon.className = "iserve-icon";
+      const img = document.createElement("img");
+      img.src = item.src;
+      img.alt = item.name;
+      icon.appendChild(img);
+      iserveRow.appendChild(icon);
+    });
+    const iserveIcons = [...iserveRow.children];
+    let iserveStep = -1;
+
+    function paintIserve(step) {
+      iserveIcons.forEach((node, index) => {
+        node.classList.toggle("is-active", index === step);
+      });
+      iserveLetters.forEach((node) => {
+        node.classList.toggle("is-active", node.dataset.step === String(step));
+      });
+      if (step !== iserveStep) {
+        iserveStep = step;
+        iserveLabel.textContent = STEPS[step].name;
+        iserveLabel.classList.remove("enter");
+        void iserveLabel.offsetWidth;
+        iserveLabel.classList.add("enter");
+      }
+    }
+
+    const started = performance.now();
+    function tick(now) {
+      const cycle = STEP_MS * STEPS.length;
+      const elapsed = (now - started) % cycle;
+      const step = Math.floor(elapsed / STEP_MS);
+      if (step !== currentStep) {
+        currentStep = step;
+        showStep(step);
+      }
+      paintIserve(step);
+      requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+
+    document.querySelectorAll(".panel").forEach((panel) => {
+      panel.querySelectorAll(".seg button").forEach((button) => {
+        button.addEventListener("click", () => {
+          panel.dataset.theme = button.dataset.mode;
+          panel.querySelectorAll(".seg button").forEach((item) => {
+            item.setAttribute("aria-pressed", String(item === button));
+          });
+        });
+      });
+    });
+  </script>
+</body>
+</html>
