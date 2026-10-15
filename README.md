@@ -1,27 +1,55 @@
 # @ycab-foundation/loading-screen
 
-Loading screen YCAB dalam satu web component: `<ycab-loader>`.
-Bisa dipakai di React, Next.js, Vue, Laravel (Blade / Vite), maupun HTML biasa — tanpa copy-paste CSS/JS.
+Kumpulan loading screen YCAB yang bisa langsung dipakai di React, Next.js, Vue, Laravel, maupun HTML biasa.
 
-Tersedia 3 varian, tinggal ganti atribut `variant`:
+Cukup pasang satu kali, lalu tampilkan dengan tag `<ycab-loader>`. Kamu tidak perlu menyalin CSS, JavaScript, atau gambar apa pun ke project — semuanya sudah ada di dalam package.
 
-| Variant  | Tampilan                                         |
-| -------- | ------------------------------------------------ |
-| `iserve` | 6 ikon nilai + tulisan I-SERVE (default)         |
-| `values` | Ikon nilai bergantian satu per satu dengan glow  |
-| `logo`   | Logo YCAB Foundation dengan ornamen berkedip     |
+Ada tiga pilihan tampilan yang bisa kamu gunakan:
 
-Semua gambar sudah tertanam di dalam package, jadi tidak perlu mengatur path aset.
+| Variant  | Tampilan                                                  |
+| -------- | --------------------------------------------------------- |
+| `iserve` | Enam ikon nilai dan tulisan I-SERVE yang menyala bergantian (default) |
+| `values` | Ikon nilai muncul satu per satu dengan efek cahaya       |
+| `logo`   | Logo YCAB Foundation dengan ornamen yang berkedip        |
 
 ---
 
-## Instalasi
+## Daftar Isi
+
+1. [Instalasi](#1-instalasi)
+2. [Menampilkan loading pertama kamu](#2-menampilkan-loading-pertama-kamu)
+3. [Memilih variant dan tema](#3-memilih-variant-dan-tema)
+4. [Loading layar penuh](#4-loading-layar-penuh)
+5. [Panduan per framework](#5-panduan-per-framework)
+6. [Daftar atribut](#6-daftar-atribut)
+7. [Daftar fungsi JavaScript](#7-daftar-fungsi-javascript)
+8. [Mengubah warna dan gaya](#8-mengubah-warna-dan-gaya)
+
+---
+
+## 1. Instalasi
+
+Ada dua cara memasang package ini. Pilih salah satu yang sesuai dengan project kamu.
+
+### Cara A — Lewat npm
+
+Gunakan cara ini jika project kamu memakai npm (React, Next.js, Vue, atau Laravel dengan Vite). Jalankan perintah berikut di folder project:
 
 ```bash
 npm i @ycab-foundation/loading-screen
 ```
 
-Atau tanpa npm, lewat CDN:
+Setelah terpasang, import package di file utama aplikasi kamu (misalnya `main.jsx`, `main.js`, atau `app.js`):
+
+```js
+import "@ycab-foundation/loading-screen";
+```
+
+Import ini cukup dilakukan **satu kali**. Setelah itu, tag `<ycab-loader>` bisa dipakai di halaman mana saja.
+
+### Cara B — Lewat CDN
+
+Gunakan cara ini jika project kamu tidak memakai npm, misalnya HTML biasa atau Laravel Blade tanpa Vite. Tambahkan baris berikut di dalam `<head>`:
 
 ```html
 <script src="https://cdn.jsdelivr.net/npm/@ycab-foundation/loading-screen@1/dist/ycab-loader.js"></script>
@@ -29,82 +57,167 @@ Atau tanpa npm, lewat CDN:
 
 ---
 
-## Penggunaan cepat
+## 2. Menampilkan loading pertama kamu
 
-Import sekali (biasanya di entry file aplikasi), lalu pakai tag-nya di mana saja:
+Setelah package terpasang, letakkan tag berikut di tempat kamu ingin loading muncul:
 
-```js
-import "@ycab-foundation/loading-screen";
+```html
+<ycab-loader></ycab-loader>
 ```
+
+Hasilnya adalah loading screen variant `iserve` dengan tema terang. Loading akan terus beranimasi sampai tag tersebut kamu hapus dari halaman.
+
+---
+
+## 3. Memilih variant dan tema
+
+### Mengganti variant
+
+Untuk mengganti tampilan, tambahkan atribut `variant`:
 
 ```html
 <ycab-loader variant="iserve"></ycab-loader>
-<ycab-loader variant="values" theme="dark"></ycab-loader>
-<ycab-loader variant="logo" theme="auto"></ycab-loader>
+<ycab-loader variant="values"></ycab-loader>
+<ycab-loader variant="logo"></ycab-loader>
 ```
 
-Loading layar penuh lewat JavaScript:
+Variant juga bisa diganti saat halaman sedang berjalan. Animasinya akan langsung berubah tanpa perlu memuat ulang halaman.
+
+### Mengganti tema
+
+Gunakan atribut `theme` untuk memilih tema terang atau gelap:
+
+```html
+<ycab-loader theme="light"></ycab-loader>
+<ycab-loader theme="dark"></ycab-loader>
+<ycab-loader theme="auto"></ycab-loader>
+```
+
+Jika memilih `auto`, tema akan mengikuti pengaturan mode gelap/terang di perangkat pengguna.
+
+---
+
+## 4. Loading layar penuh
+
+Sering kali kamu ingin loading menutupi seluruh halaman, misalnya saat menyimpan data atau berpindah halaman. Ada dua cara untuk melakukannya.
+
+### Lewat atribut
+
+Tambahkan atribut `fullscreen` pada tag:
+
+```html
+<ycab-loader variant="logo" fullscreen></ycab-loader>
+```
+
+### Lewat JavaScript
+
+Cara ini lebih praktis karena kamu tidak perlu menulis tag di HTML. Panggil `show()` untuk menampilkan loading, lalu `hide()` untuk menutupnya:
 
 ```js
 import YCABLoader from "@ycab-foundation/loading-screen";
 
 YCABLoader.show({ variant: "logo" });
-// ...
-YCABLoader.hide();
 
-// atau otomatis tampil selama promise berjalan
-const data = await YCABLoader.wrap(fetch("/api/data").then((r) => r.json()));
+// setelah proses selesai
+YCABLoader.hide();
+```
+
+Jika kamu memakai CDN, fungsi yang sama tersedia lewat `window.YCABLoader`, sehingga tidak perlu `import`.
+
+### Menutup loading secara otomatis
+
+Kalau kamu sedang menunggu sebuah proses (misalnya request ke API), gunakan `wrap()`. Loading akan muncul selama proses berjalan dan otomatis tertutup ketika selesai — termasuk jika prosesnya gagal.
+
+```js
+const response = await YCABLoader.wrap(fetch("/api/users"));
+```
+
+Kamu juga bisa memilih variant dan tema:
+
+```js
+await YCABLoader.wrap(simpanData(), { variant: "values", theme: "dark" });
 ```
 
 ---
 
-## Contoh per framework
+## 5. Panduan per framework
 
 ### HTML biasa
 
+**Langkah 1.** Tambahkan script CDN di dalam `<head>`.
+
+**Langkah 2.** Gunakan tag atau fungsi JavaScript-nya.
+
 ```html
-<script src="https://cdn.jsdelivr.net/npm/@ycab-foundation/loading-screen@1/dist/ycab-loader.js"></script>
+<!DOCTYPE html>
+<html>
+<head>
+  <script src="https://cdn.jsdelivr.net/npm/@ycab-foundation/loading-screen@1/dist/ycab-loader.js"></script>
+</head>
+<body>
+  <ycab-loader variant="iserve"></ycab-loader>
 
-<ycab-loader variant="iserve"></ycab-loader>
-
-<script>
-  YCABLoader.show({ variant: "values", theme: "dark" });
-  setTimeout(() => YCABLoader.hide(), 2000);
-</script>
+  <button onclick="YCABLoader.show({ variant: 'logo' })">Tampilkan loading</button>
+</body>
+</html>
 ```
 
-### React (Vite / CRA)
+### React
+
+**Langkah 1.** Install package:
+
+```bash
+npm i @ycab-foundation/loading-screen
+```
+
+**Langkah 2.** Import di `main.jsx` (atau `index.js`):
 
 ```jsx
-// main.jsx
 import "@ycab-foundation/loading-screen";
 ```
 
+**Langkah 3.** Gunakan di komponen:
+
 ```jsx
-import { useState } from "react";
+export default function UserList({ loading, users }) {
+  if (loading) {
+    return <ycab-loader variant="iserve" theme="auto" />;
+  }
+
+  return (
+    <ul>
+      {users.map((user) => (
+        <li key={user.id}>{user.name}</li>
+      ))}
+    </ul>
+  );
+}
+```
+
+**Langkah 4 (opsional).** Tampilkan loading layar penuh saat menyimpan data:
+
+```jsx
 import YCABLoader from "@ycab-foundation/loading-screen";
 
-export default function UserList() {
-  const [loading, setLoading] = useState(true);
-
-  if (loading) return <ycab-loader variant="iserve" theme="auto" />;
-  return <div>...</div>;
-}
-
-async function save(payload) {
+async function handleSave(data) {
   await YCABLoader.wrap(
-    fetch("/api/save", { method: "POST", body: JSON.stringify(payload) }),
+    fetch("/api/save", { method: "POST", body: JSON.stringify(data) }),
     { variant: "logo" }
   );
 }
 ```
 
-> Untuk atribut boolean (`fullscreen`, `plain`, `hide-label`) di React, tulis sebagai string kosong:
-> `<ycab-loader fullscreen="" />`, bukan `fullscreen={true}`.
+> **Catatan:** Di React, tulis atribut `fullscreen`, `plain`, dan `hide-label` dengan string kosong, misalnya `<ycab-loader fullscreen="" />`. Hindari penulisan `fullscreen={true}`.
 
 ### Next.js (App Router)
 
-Package aman di-import saat SSR. Import di komponen client:
+**Langkah 1.** Install package:
+
+```bash
+npm i @ycab-foundation/loading-screen
+```
+
+**Langkah 2.** Buat file `app/loading.jsx`. Next.js akan menampilkan file ini secara otomatis setiap kali halaman sedang dimuat.
 
 ```jsx
 "use client";
@@ -115,73 +228,106 @@ export default function Loading() {
 }
 ```
 
-Simpan sebagai `app/loading.jsx` agar otomatis tampil saat perpindahan halaman.
+Baris `"use client"` wajib ada karena loading screen ini berjalan di browser.
 
-### Vue 3 (Vite)
+### Vue 3
 
-Beri tahu Vue bahwa `ycab-loader` adalah custom element:
+**Langkah 1.** Install package:
+
+```bash
+npm i @ycab-foundation/loading-screen
+```
+
+**Langkah 2.** Daftarkan `ycab-loader` sebagai custom element di `vite.config.js`. Tanpa langkah ini, Vue akan menampilkan peringatan di console.
 
 ```js
-// vite.config.js
 import vue from "@vitejs/plugin-vue";
 
 export default {
   plugins: [
     vue({
       template: {
-        compilerOptions: { isCustomElement: (tag) => tag === "ycab-loader" },
+        compilerOptions: {
+          isCustomElement: (tag) => tag === "ycab-loader",
+        },
       },
     }),
   ],
 };
 ```
 
+**Langkah 3.** Import di `main.js`:
+
 ```js
-// main.js
 import "@ycab-foundation/loading-screen";
 ```
 
+**Langkah 4.** Gunakan di komponen:
+
 ```vue
+<script setup>
+import { ref } from "vue";
+
+const loading = ref(true);
+</script>
+
 <template>
-  <ycab-loader v-if="loading" :variant="variant" theme="auto" />
+  <ycab-loader v-if="loading" variant="values" theme="auto" />
 </template>
 ```
 
 ### Laravel
 
-**Dengan Vite** (`resources/js/app.js`):
+#### Menggunakan Vite
+
+**Langkah 1.** Install package:
+
+```bash
+npm i @ycab-foundation/loading-screen
+```
+
+**Langkah 2.** Import di `resources/js/app.js`:
 
 ```js
 import "@ycab-foundation/loading-screen";
 ```
 
-**Tanpa build step** — taruh di layout Blade (`resources/views/layouts/app.blade.php`):
+**Langkah 3.** Pastikan layout Blade kamu sudah memuat `@vite('resources/js/app.js')`. Setelah itu, tag `<ycab-loader>` bisa digunakan di semua view.
+
+#### Tanpa Vite (Blade saja)
+
+**Langkah 1.** Tambahkan script CDN di layout utama, misalnya `resources/views/layouts/app.blade.php`:
 
 ```blade
 <head>
   <script src="https://cdn.jsdelivr.net/npm/@ycab-foundation/loading-screen@1/dist/ycab-loader.js"></script>
 </head>
-<body>
-  @yield('content')
-</body>
 ```
 
-Contoh tampilkan loading saat submit form:
+**Langkah 2.** Gunakan di view mana pun.
+
+#### Contoh: loading saat form disubmit
 
 ```blade
 <form method="POST" action="{{ route('orders.store') }}" onsubmit="YCABLoader.show({ variant: 'logo' })">
   @csrf
-  ...
+  <input type="text" name="name">
+  <button type="submit">Simpan</button>
 </form>
 ```
 
-Contoh dengan Axios:
+Loading akan tampil sampai halaman berikutnya selesai dimuat.
+
+#### Contoh: loading otomatis untuk setiap request Axios
+
+Tambahkan kode ini di `resources/js/app.js` (atau `bootstrap.js`). Setiap request Axios akan menampilkan loading, dan loading akan tertutup ketika response diterima.
 
 ```js
 axios.interceptors.request.use((config) => {
   YCABLoader.show();
   return config;
 });
+
 axios.interceptors.response.use(
   (response) => {
     YCABLoader.hide();
@@ -194,56 +340,82 @@ axios.interceptors.response.use(
 );
 ```
 
----
-
-## Atribut `<ycab-loader>`
-
-| Atribut      | Nilai                          | Default    | Keterangan                                                           |
-| ------------ | ------------------------------ | ---------- | -------------------------------------------------------------------- |
-| `variant`    | `iserve` \| `values` \| `logo` | `iserve`   | Jenis loading screen. Bisa diganti kapan saja.                       |
-| `theme`      | `light` \| `dark` \| `auto`    | `light`    | `auto` mengikuti setting gelap/terang perangkat.                     |
-| `fullscreen` | boolean                        | –          | Tampil sebagai overlay menutupi seluruh halaman.                     |
-| `plain`      | boolean                        | –          | Tanpa background kartu (untuk `iserve` & `values`).                  |
-| `hide-label` | boolean                        | –          | Sembunyikan teks di bawah animasi.                                   |
-| `label`      | string                         | `Loading`  | Teks untuk screen reader. Di varian `logo` juga jadi teks yang tampil. |
-| `step-ms`    | angka (ms)                     | 800 / 440  | Kecepatan pergantian animasi.                                        |
-| `start`      | timestamp (ms)                 | –          | Samakan timing beberapa loader dengan memberi nilai yang sama.       |
+Jika beberapa request berjalan bersamaan, loading baru akan tertutup setelah semua request selesai.
 
 ---
 
-## API JavaScript
+## 6. Daftar atribut
+
+Berikut semua atribut yang bisa kamu tambahkan pada tag `<ycab-loader>`:
+
+| Atribut      | Pilihan nilai                  | Default   | Fungsi                                                                 |
+| ------------ | ------------------------------ | --------- | ---------------------------------------------------------------------- |
+| `variant`    | `iserve`, `values`, `logo`     | `iserve`  | Memilih tampilan loading.                                              |
+| `theme`      | `light`, `dark`, `auto`        | `light`   | Memilih tema terang, gelap, atau mengikuti perangkat.                  |
+| `fullscreen` | –                              | –         | Menampilkan loading menutupi seluruh halaman.                          |
+| `plain`      | –                              | –         | Menghilangkan kotak kartu di belakang animasi (variant `iserve` dan `values`). |
+| `hide-label` | –                              | –         | Menyembunyikan teks di bawah animasi.                                  |
+| `label`      | teks bebas                     | `Loading` | Teks untuk pembaca layar. Pada variant `logo`, teks ini juga ditampilkan. |
+| `step-ms`    | angka dalam milidetik          | 800 (`logo`: 440) | Mengatur kecepatan animasi. Semakin kecil, semakin cepat.              |
+
+Atribut tanpa pilihan nilai (`fullscreen`, `plain`, `hide-label`) cukup ditulis namanya saja, contohnya:
+
+```html
+<ycab-loader variant="values" plain hide-label></ycab-loader>
+```
+
+---
+
+## 7. Daftar fungsi JavaScript
+
+Fungsi-fungsi berikut bisa diakses lewat `import YCABLoader from "@ycab-foundation/loading-screen"` atau `window.YCABLoader` jika memakai CDN.
+
+### `YCABLoader.show(options)`
+
+Menampilkan loading layar penuh. Jika dipanggil beberapa kali, loading tetap hanya muncul satu.
 
 ```js
-import YCABLoader, { show, hide, wrap } from "@ycab-foundation/loading-screen";
+YCABLoader.show({ variant: "values", theme: "dark" });
 ```
 
-Tanpa bundler, API yang sama tersedia di `window.YCABLoader`.
+### `YCABLoader.hide()`
 
-| Fungsi                      | Keterangan                                                                                  |
-| --------------------------- | ------------------------------------------------------------------------------------------- |
-| `show(options?)`            | Tampilkan loader layar penuh. Pemanggilan berulang tidak membuat overlay ganda.             |
-| `hide({ force? })`          | Tutup loader. Jika `show()` dipanggil 3x, butuh 3x `hide()` — atau `hide({ force: true })`. |
-| `wrap(promiseOrFn, opts?)`  | Tampilkan loader selama promise berjalan, lalu otomatis ditutup (termasuk saat error).      |
-| `variants`                  | Daftar varian yang tersedia.                                                                |
+Menutup loading layar penuh. Jika `show()` dipanggil tiga kali, `hide()` juga perlu dipanggil tiga kali sebelum loading benar-benar tertutup. Untuk langsung menutupnya, gunakan:
 
-Opsi untuk `show` / `wrap`:
-
-```ts
-{
-  variant?: "iserve" | "values" | "logo";
-  theme?: "light" | "dark" | "auto";
-  stepMs?: number;
-  hideLabel?: boolean;
-  plain?: boolean;
-  label?: string;
-}
+```js
+YCABLoader.hide({ force: true });
 ```
+
+### `YCABLoader.wrap(proses, options)`
+
+Menampilkan loading selama `proses` berjalan, lalu menutupnya secara otomatis.
+
+```js
+const users = await YCABLoader.wrap(
+  fetch("/api/users").then((res) => res.json())
+);
+```
+
+### Pilihan `options`
+
+Pilihan berikut bisa digunakan pada `show()` dan `wrap()`:
+
+| Pilihan     | Contoh nilai                  | Fungsi                              |
+| ----------- | ----------------------------- | ----------------------------------- |
+| `variant`   | `"iserve"`, `"values"`, `"logo"` | Memilih tampilan loading.        |
+| `theme`     | `"light"`, `"dark"`, `"auto"` | Memilih tema.                       |
+| `hideLabel` | `true`                        | Menyembunyikan teks.                |
+| `plain`     | `true`                        | Menghilangkan kotak kartu.          |
+| `label`     | `"Menyimpan data…"`           | Teks untuk pembaca layar.           |
+| `stepMs`    | `600`                         | Mengatur kecepatan animasi.         |
 
 ---
 
-## Kustomisasi tampilan
+## 8. Mengubah warna dan gaya
 
-Warna bisa diubah lewat CSS variable dari luar:
+### Mengganti warna
+
+Kamu bisa menyesuaikan warna loading dengan CSS biasa di project kamu:
 
 ```css
 ycab-loader {
@@ -253,84 +425,37 @@ ycab-loader {
 }
 ```
 
-| Variable          | Fungsi                              |
-| ----------------- | ----------------------------------- |
-| `--ycab-red`      | Warna aksen                         |
-| `--ycab-card`     | Background kartu                    |
-| `--ycab-ink`      | Warna teks di kartu                 |
-| `--ycab-border`   | Warna border kartu                  |
-| `--ycab-shadow`   | Bayangan kartu                      |
-| `--ycab-backdrop` | Background overlay mode fullscreen  |
+| Variable          | Yang diubah                                   |
+| ----------------- | --------------------------------------------- |
+| `--ycab-red`      | Warna aksen (ikon dan huruf yang aktif)       |
+| `--ycab-card`     | Warna latar kartu                             |
+| `--ycab-ink`      | Warna teks di dalam kartu                     |
+| `--ycab-border`   | Warna garis tepi kartu                        |
+| `--ycab-shadow`   | Bayangan kartu                                |
+| `--ycab-backdrop` | Warna latar saat mode layar penuh             |
 
-Bagian dalam komponen juga bisa di-style lewat `::part()`: `root`, `card`, `label`, `icons`, `brand`, `logo`.
+### Mengubah bentuk bagian tertentu
+
+Untuk mengubah gaya bagian tertentu, gunakan `::part()`. Bagian yang tersedia adalah `card`, `label`, `icons`, `brand`, dan `logo`.
 
 ```css
 ycab-loader::part(card) {
   border-radius: 12px;
 }
+
+ycab-loader::part(label) {
+  font-size: 14px;
+}
 ```
 
-Varian `iserve` memuat font Nunito dari Google Fonts. Untuk mematikannya (misalnya karena CSP), set sebelum package di-load:
+### Mematikan font dari Google Fonts
 
-```js
-window.YCAB_LOADER_NO_FONT = true;
+Variant `iserve` memakai font Nunito yang dimuat dari Google Fonts. Jika project kamu tidak mengizinkan koneksi ke Google Fonts, tambahkan kode ini **sebelum** package dimuat:
+
+```html
+<script>
+  window.YCAB_LOADER_NO_FONT = true;
+</script>
 ```
 
----
-
-## TypeScript
-
-Type sudah disertakan, termasuk deklarasi JSX untuk `<ycab-loader>` di React. Tidak perlu install `@types` tambahan.
-
----
-
-## Development
-
-```bash
-npm run build      # generate dist/ dari src/
-```
-
-Buka `demo.html` (lewat MAMP/web server lokal) untuk melihat semua varian.
-
-Struktur:
-
-```
-src/
-  shared.js           data nilai I-SERVE & registry varian
-  core.js             web component, tema, fullscreen, API show/hide/wrap
-  variants/*.js       satu file per varian
-  assets/*.webp       gambar (ditanam ke bundle saat build)
-scripts/build.mjs     bundler sederhana tanpa dependency
-```
-
-### Menambah varian baru
-
-1. Buat `src/variants/nama.js`:
-
-   ```js
-   VARIANTS.nama = {
-     stepMs: 800,
-     steps: 4,
-     css: `...`,
-     html(host) { return `<div class="card" part="card">...</div>`; },
-     mount(root, host) {
-       return {
-         paint(step) { /* update tampilan untuk step ke-n */ },
-         destroy() {},
-       };
-     },
-   };
-   ```
-
-2. Taruh gambarnya di `src/assets/` (akses lewat `ASSETS["nama-file-tanpa-ekstensi"]`).
-3. Jalankan `npm run build`, lalu pakai dengan `<ycab-loader variant="nama">`.
-
-### Rilis versi baru
-
-```bash
-npm run build
-git add -A && git commit -m "..."
-npm version patch          # atau minor / major
-git push origin main --follow-tags
-npm publish --access public
-```
+Loading akan tetap tampil normal dengan font bawaan sistem.
