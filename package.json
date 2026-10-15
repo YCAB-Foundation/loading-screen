@@ -1,6 +1,6 @@
 {
   "name": "@ycab-foundation/loading-screen",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "YCAB loading screens (iserve, values, logo) as one framework-agnostic web component: <ycab-loader>.",
   "main": "dist/ycab-loader.js",
   "module": "dist/ycab-loader.mjs",
