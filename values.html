@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Ikon nilai — Sample Loading Screen</title>
+  <script>
+    if (window.self !== window.top) document.documentElement.dataset.frame = "1";
+  </script>
+  <style>
+    :root {
+      --red: #ed1c24;
+      --ink: #141414;
+      --muted: #5c6570;
+      --line: #e3e6eb;
+      --page: #eceff3;
+      --card: #ffffff;
+      --light-stage: #f4f5f7;
+      --dark-stage: #0b0f17;
+      --dark-card: #141922;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 32px 16px;
+      font-family: "Segoe UI", Helvetica, Arial, sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(900px 420px at 10% -10%, rgba(237, 28, 36, 0.08), transparent 60%),
+        var(--page);
+    }
+
+    .screen {
+      width: min(560px, 100%);
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      overflow: hidden;
+      box-shadow: 0 16px 40px rgba(20, 24, 32, 0.06);
+    }
+
+    .screen-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 16px 18px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .kicker {
+      margin: 0;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--red);
+    }
+
+    .screen-head h1 {
+      margin: 2px 0 0;
+      font-size: 18px;
+      letter-spacing: -0.02em;
+    }
+
+    .back {
+      margin: 6px 0 0;
+      font-size: 13px;
+    }
+
+    .back a { color: var(--muted); }
+
+    .seg {
+      display: inline-flex;
+      padding: 3px;
+      border-radius: 999px;
+      background: #f1f3f6;
+      border: 1px solid var(--line);
+      flex: none;
+    }
+
+    .seg button {
+      appearance: none;
+      border: 0;
+      background: transparent;
+      color: #4b5563;
+      font: inherit;
+      font-size: 13px;
+      font-weight: 650;
+      padding: 7px 12px;
+      border-radius: 999px;
+      cursor: pointer;
+    }
+
+    .seg button[aria-pressed="true"] {
+      background: #fff;
+      color: var(--ink);
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+    }
+
+    .viewport {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 460px;
+      padding: 28px 20px 32px;
+      background: var(--light-stage);
+      transition: background-color 0.35s ease;
+    }
+
+    .screen[data-theme="dark"] .viewport {
+      background: var(--dark-stage);
+    }
+
+    .value-card {
+      position: relative;
+      width: min(100%, 420px);
+      padding: 40px 36px 32px;
+      border-radius: 24px;
+      background: #fff;
+      color: #0f172a;
+      border: 1px solid rgba(226, 232, 240, 0.9);
+      box-shadow: 0 18px 40px rgba(15, 23, 42, 0.08);
+      overflow: hidden;
+      user-select: none;
+      transition: background-color 0.5s ease, color 0.5s ease, border-color 0.5s ease;
+    }
+
+    .screen[data-theme="dark"] .value-card {
+      background: var(--dark-card);
+      color: #f8fafc;
+      border-color: rgba(255, 255, 255, 0.08);
+      box-shadow: none;
+    }
+
+    .glow-bg {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      opacity: 0.2;
+      background: radial-gradient(circle at 50% 42%, var(--red) 0%, transparent 68%);
+      transition: opacity 0.7s ease;
+    }
+
+    .stage {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 190px;
+    }
+
+    .aura {
+      position: absolute;
+      width: 176px;
+      height: 176px;
+      border-radius: 999px;
+      pointer-events: none;
+      background: var(--red);
+      filter: blur(28px);
+      animation: aura 2.2s ease-in-out infinite;
+    }
+
+    .icon-slot {
+      position: relative;
+      width: 144px;
+      height: 144px;
+      overflow: hidden;
+    }
+
+    .icon-layer {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      filter: drop-shadow(0 6px 8px rgba(15, 23, 42, 0.12));
+    }
+
+    .icon-layer.enter { animation: slide-in 0.35s cubic-bezier(0.16, 1, 0.3, 1) both; }
+    .icon-layer.exit { animation: slide-out 0.22s ease-in both; }
+
+    .icon-float {
+      width: 144px;
+      height: 144px;
+      animation: float 2.6s ease-in-out infinite;
+    }
+
+    .icon-float img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      display: block;
+    }
+
+    .title-slot {
+      position: relative;
+      z-index: 1;
+      margin-top: 18px;
+      min-height: 36px;
+      text-align: center;
+    }
+
+    .title-slot h2 {
+      margin: 0;
+      font-size: 22px;
+      letter-spacing: -0.03em;
+    }
+
+    .title-slot .enter { animation: title-in 0.25s ease both; }
+
+    @keyframes aura {
+      0%, 100% { transform: scale(1); opacity: 0.15; }
+      50% { transform: scale(1.08); opacity: 0.3; }
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(-3px); }
+      50% { transform: translateY(3px); }
+    }
+
+    @keyframes slide-in {
+      from { transform: translateX(60px) scale(0.88); opacity: 0; }
+      to { transform: none; opacity: 1; }
+    }
+
+    @keyframes slide-out {
+      from { transform: none; opacity: 1; }
+      to { transform: translateX(-60px) scale(0.88); opacity: 0; }
+    }
+
+    @keyframes title-in {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: none; }
+    }
+
+    html[data-frame="1"] body {
+      min-height: 0;
+      padding: 0;
+      display: block;
+      background: transparent;
+    }
+
+    html[data-frame="1"] .screen { width: 100%; }
+
+    html[data-frame="1"] .back { display: none; }
+  </style>
+</head>
+<body>
+  <main class="screen" id="screen" data-theme="light">
+    <header class="screen-head">
+      <div>
+        <p class="kicker">Screen 2</p>
+        <h1>Ikon nilai</h1>
+        <p class="back"><a href="index.html">Semua screen</a></p>
+      </div>
+      <div class="seg" role="group" aria-label="Mode">
+        <button type="button" data-mode="light" aria-pressed="true">Light</button>
+        <button type="button" data-mode="dark" aria-pressed="false">Dark</button>
+      </div>
+    </header>
+    <div class="viewport">
+      <div class="value-card" role="status" aria-live="polite" aria-label="Loading">
+        <div class="glow-bg"></div>
+        <div class="stage">
+          <div class="aura"></div>
+          <div class="icon-slot" id="icon-slot"></div>
+        </div>
+        <div class="title-slot" id="title-slot"></div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    const STEPS = [
+      { name: "Integrity", src: "assets/icon-integrity.png" },
+      { name: "Service", src: "assets/icon-service.png" },
+      { name: "Empathy", src: "assets/icon-empathy.png" },
+      { name: "Resilience", src: "assets/icon-resilience.png" },
+      { name: "Vibrancy", src: "assets/icon-vibrancy.png" },
+      { name: "Excellence", src: "assets/icon-excellence.png" },
+    ];
+
+    const iconSlot = document.getElementById("icon-slot");
+    const titleSlot = document.getElementById("title-slot");
+    const STEP_MS = 800;
+    const EXIT_MS = 220;
+    let currentStep = -1;
+    let iconToken = 0;
+
+    function showStep(step) {
+      const token = ++iconToken;
+      const data = STEPS[step];
+      const previous = iconSlot.querySelector(".icon-layer");
+
+      const mount = () => {
+        if (token !== iconToken) return;
+        iconSlot.replaceChildren();
+        const layer = document.createElement("div");
+        layer.className = "icon-layer enter";
+        layer.innerHTML = '<div class="icon-float"><img alt="" /></div>';
+        layer.querySelector("img").src = data.src;
+        iconSlot.appendChild(layer);
+
+        titleSlot.replaceChildren();
+        const heading = document.createElement("h2");
+        heading.className = "enter";
+        heading.textContent = data.name;
+        titleSlot.appendChild(heading);
+      };
+
+      if (!previous) {
+        mount();
+        return;
+      }
+
+      previous.classList.remove("enter");
+      previous.classList.add("exit");
+      let settled = false;
+      const finish = () => {
+        if (settled) return;
+        settled = true;
+        mount();
+      };
+      previous.addEventListener("animationend", (event) => {
+        if (event.target !== previous || event.animationName !== "slide-out") return;
+        finish();
+      });
+      window.setTimeout(finish, EXIT_MS + 40);
+    }
+
+    const params = new URLSearchParams(location.search);
+    const startParam = Number(params.get("start"));
+    const started = Number.isFinite(startParam) && startParam > 0 ? startParam : Date.now();
+
+    function tick() {
+      const cycle = STEP_MS * STEPS.length;
+      const elapsed = ((Date.now() - started) % cycle + cycle) % cycle;
+      const step = Math.floor(elapsed / STEP_MS);
+      if (step !== currentStep) {
+        currentStep = step;
+        showStep(step);
+      }
+      requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+
+    const screen = document.getElementById("screen");
+    function applyTheme(mode) {
+      if (mode !== "light" && mode !== "dark") return;
+      screen.dataset.theme = mode;
+      screen.querySelectorAll(".seg button").forEach((button) => {
+        button.setAttribute("aria-pressed", String(button.dataset.mode === mode));
+      });
+    }
+
+    screen.querySelectorAll(".seg button").forEach((button) => {
+      button.addEventListener("click", () => applyTheme(button.dataset.mode));
+    });
+  </script>
+</body>
+</html>

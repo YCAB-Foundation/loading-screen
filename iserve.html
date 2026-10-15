@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>I-SERVE — Sample Loading Screen</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet" />
+  <script>
+    if (window.self !== window.top) document.documentElement.dataset.frame = "1";
+  </script>
+  <style>
+    :root {
+      --red: #ed1c24;
+      --ink: #141414;
+      --muted: #5c6570;
+      --line: #e3e6eb;
+      --page: #eceff3;
+      --card: #ffffff;
+      --light-stage: #f4f5f7;
+      --dark-stage: #0b0f17;
+      --dark-card: #141922;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 32px 16px;
+      font-family: "Segoe UI", Helvetica, Arial, sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(900px 420px at 10% -10%, rgba(237, 28, 36, 0.08), transparent 60%),
+        var(--page);
+    }
+
+    .screen {
+      width: min(560px, 100%);
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      overflow: hidden;
+      box-shadow: 0 16px 40px rgba(20, 24, 32, 0.06);
+    }
+
+    .screen-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 16px 18px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .kicker {
+      margin: 0;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--red);
+    }
+
+    .screen-head h1 {
+      margin: 2px 0 0;
+      font-size: 18px;
+      letter-spacing: -0.02em;
+    }
+
+    .back {
+      margin: 6px 0 0;
+      font-size: 13px;
+    }
+
+    .back a { color: var(--muted); }
+
+    .seg {
+      display: inline-flex;
+      padding: 3px;
+      border-radius: 999px;
+      background: #f1f3f6;
+      border: 1px solid var(--line);
+      flex: none;
+    }
+
+    .seg button {
+      appearance: none;
+      border: 0;
+      background: transparent;
+      color: #4b5563;
+      font: inherit;
+      font-size: 13px;
+      font-weight: 650;
+      padding: 7px 12px;
+      border-radius: 999px;
+      cursor: pointer;
+    }
+
+    .seg button[aria-pressed="true"] {
+      background: #fff;
+      color: var(--ink);
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+    }
+
+    .viewport {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 460px;
+      padding: 28px 20px 32px;
+      background: var(--light-stage);
+      transition: background-color 0.35s ease;
+    }
+
+    .screen[data-theme="dark"] .viewport {
+      background: var(--dark-stage);
+    }
+
+    .iserve-card {
+      width: min(100%, 420px);
+      padding: 36px 24px 28px;
+      border-radius: 24px;
+      background: #fff;
+      color: #0f172a;
+      border: 1px solid rgba(226, 232, 240, 0.9);
+      box-shadow: 0 18px 40px rgba(15, 23, 42, 0.08);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      font-family: "Nunito", "Segoe UI", sans-serif;
+      user-select: none;
+      transition: background-color 0.5s ease, color 0.5s ease, border-color 0.5s ease;
+    }
+
+    .screen[data-theme="dark"] .iserve-card {
+      background: var(--dark-card);
+      color: #f8fafc;
+      border-color: rgba(255, 255, 255, 0.08);
+      box-shadow: none;
+    }
+
+    .iserve-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      width: 100%;
+      padding: 16px 0;
+    }
+
+    .iserve-icon {
+      width: min(44px, calc((100% - 72px) / 6));
+      height: min(44px, calc((100% - 72px) / 6));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex: none;
+      opacity: 0.3;
+      transform: scale(0.92) translateY(0);
+      transition: opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1), transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .iserve-icon.is-active {
+      opacity: 1;
+      transform: scale(1.15) translateY(-4px);
+    }
+
+    .iserve-icon img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      display: block;
+      user-select: none;
+      -webkit-user-drag: none;
+    }
+
+    .iserve-brand {
+      margin: 16px 0 0;
+      font-size: 30px;
+      font-weight: 800;
+      letter-spacing: 0.25em;
+      line-height: 1;
+      text-align: center;
+      color: #4d4d4d;
+    }
+
+    .iserve-letter {
+      color: #4d4d4d;
+      transition: color 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .iserve-letter.is-active {
+      color: var(--red);
+    }
+
+    .screen[data-theme="dark"] .iserve-letter {
+      color: #a3a3a3;
+    }
+
+    .screen[data-theme="dark"] .iserve-letter.is-active {
+      color: var(--red);
+    }
+
+    .iserve-label {
+      min-height: 24px;
+      margin: 8px 0 0;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      color: var(--red);
+      text-align: center;
+    }
+
+    .iserve-label.enter { animation: iserve-label-in 0.2s ease both; }
+
+    @keyframes iserve-label-in {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: none; }
+    }
+
+    html[data-frame="1"] body {
+      min-height: 0;
+      padding: 0;
+      display: block;
+      background: transparent;
+    }
+
+    html[data-frame="1"] .screen { width: 100%; }
+
+    html[data-frame="1"] .back { display: none; }
+  </style>
+</head>
+<body>
+  <main class="screen" id="screen" data-theme="light">
+    <header class="screen-head">
+      <div>
+        <p class="kicker">Screen 3</p>
+        <h1>I-SERVE</h1>
+        <p class="back"><a href="index.html">Semua screen</a></p>
+      </div>
+      <div class="seg" role="group" aria-label="Mode">
+        <button type="button" data-mode="light" aria-pressed="true">Light</button>
+        <button type="button" data-mode="dark" aria-pressed="false">Dark</button>
+      </div>
+    </header>
+    <div class="viewport">
+      <div class="iserve-card" role="status" aria-live="polite" aria-label="Loading">
+        <div class="iserve-row" id="iserve-row"></div>
+        <h2 class="iserve-brand" id="iserve-brand"></h2>
+        <p class="iserve-label" id="iserve-label"></p>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    const STEPS = [
+      { letter: "I", name: "Integrity", src: "assets/icon-integrity.png" },
+      { letter: "S", name: "Service", src: "assets/icon-service.png" },
+      { letter: "E", name: "Empathy", src: "assets/icon-empathy.png" },
+      { letter: "R", name: "Resilience", src: "assets/icon-resilience.png" },
+      { letter: "V", name: "Vibrancy", src: "assets/icon-vibrancy.png" },
+      { letter: "E", name: "Excellence", src: "assets/icon-excellence.png" },
+    ];
+
+    const iserveRow = document.getElementById("iserve-row");
+    const iserveBrand = document.getElementById("iserve-brand");
+    const iserveLabel = document.getElementById("iserve-label");
+    const BRAND = [
+      { char: "I", step: 0 },
+      { char: "-" },
+      { char: "S", step: 1 },
+      { char: "E", step: 2 },
+      { char: "R", step: 3 },
+      { char: "V", step: 4 },
+      { char: "E", step: 5 },
+    ];
+
+    BRAND.forEach((item) => {
+      const letter = document.createElement("span");
+      letter.className = "iserve-letter";
+      letter.textContent = item.char;
+      if (item.step !== undefined) letter.dataset.step = String(item.step);
+      iserveBrand.appendChild(letter);
+    });
+
+    const iserveLetters = [...iserveBrand.children];
+    STEPS.forEach((item) => {
+      const icon = document.createElement("div");
+      icon.className = "iserve-icon";
+      const img = document.createElement("img");
+      img.src = item.src;
+      img.alt = item.name;
+      icon.appendChild(img);
+      iserveRow.appendChild(icon);
+    });
+    const iserveIcons = [...iserveRow.children];
+    let iserveStep = -1;
+
+    function paintIserve(step) {
+      iserveIcons.forEach((node, index) => {
+        node.classList.toggle("is-active", index === step);
+      });
+      iserveLetters.forEach((node) => {
+        node.classList.toggle("is-active", node.dataset.step === String(step));
+      });
+      if (step !== iserveStep) {
+        iserveStep = step;
+        iserveLabel.textContent = STEPS[step].name;
+        iserveLabel.classList.remove("enter");
+        void iserveLabel.offsetWidth;
+        iserveLabel.classList.add("enter");
+      }
+    }
+
+    const STEP_MS = 800;
+    const params = new URLSearchParams(location.search);
+    const startParam = Number(params.get("start"));
+    const started = Number.isFinite(startParam) && startParam > 0 ? startParam : Date.now();
+
+    function tick() {
+      const cycle = STEP_MS * STEPS.length;
+      const elapsed = ((Date.now() - started) % cycle + cycle) % cycle;
+      const step = Math.floor(elapsed / STEP_MS);
+      paintIserve(step);
+      requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+
+    const screen = document.getElementById("screen");
+    function applyTheme(mode) {
+      if (mode !== "light" && mode !== "dark") return;
+      screen.dataset.theme = mode;
+      screen.querySelectorAll(".seg button").forEach((button) => {
+        button.setAttribute("aria-pressed", String(button.dataset.mode === mode));
+      });
+    }
+
+    screen.querySelectorAll(".seg button").forEach((button) => {
+      button.addEventListener("click", () => applyTheme(button.dataset.mode));
+    });
+  </script>
+</body>
+</html>
