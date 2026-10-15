@@ -2,15 +2,13 @@
 
 Kumpulan loading screen YCAB yang bisa langsung dipakai di React, Next.js, Vue, Laravel, maupun HTML biasa.
 
-Cukup pasang satu kali, lalu tampilkan dengan tag `<ycab-loader>`. Kamu tidak perlu menyalin CSS, JavaScript, atau gambar apa pun ke project — semuanya sudah ada di dalam package.
-
 Ada tiga pilihan tampilan yang bisa kamu gunakan:
 
-| Variant  | Tampilan                                                  |
-| -------- | --------------------------------------------------------- |
+| Variant  | Tampilan                                                              |
+| -------- | --------------------------------------------------------------------- |
 | `iserve` | Enam ikon nilai dan tulisan I-SERVE yang menyala bergantian (default) |
-| `values` | Ikon nilai muncul satu per satu dengan efek cahaya       |
-| `logo`   | Logo YCAB Foundation dengan ornamen yang berkedip        |
+| `values` | Ikon nilai muncul satu per satu dengan efek cahaya                    |
+| `logo`   | Logo YCAB Foundation dengan ornamen yang berkedip                     |
 
 ---
 
@@ -151,14 +149,16 @@ await YCABLoader.wrap(simpanData(), { variant: "values", theme: "dark" });
 ```html
 <!DOCTYPE html>
 <html>
-<head>
-  <script src="https://cdn.jsdelivr.net/npm/@ycab-foundation/loading-screen@1/dist/ycab-loader.js"></script>
-</head>
-<body>
-  <ycab-loader variant="iserve"></ycab-loader>
+  <head>
+    <script src="https://cdn.jsdelivr.net/npm/@ycab-foundation/loading-screen@1/dist/ycab-loader.js"></script>
+  </head>
+  <body>
+    <ycab-loader variant="iserve"></ycab-loader>
 
-  <button onclick="YCABLoader.show({ variant: 'logo' })">Tampilkan loading</button>
-</body>
+    <button onclick="YCABLoader.show({ variant: 'logo' })">
+      Tampilkan loading
+    </button>
+  </body>
 </html>
 ```
 
@@ -202,7 +202,7 @@ import YCABLoader from "@ycab-foundation/loading-screen";
 async function handleSave(data) {
   await YCABLoader.wrap(
     fetch("/api/save", { method: "POST", body: JSON.stringify(data) }),
-    { variant: "logo" }
+    { variant: "logo" },
   );
 }
 ```
@@ -336,7 +336,7 @@ axios.interceptors.response.use(
   (error) => {
     YCABLoader.hide();
     return Promise.reject(error);
-  }
+  },
 );
 ```
 
@@ -348,15 +348,15 @@ Jika beberapa request berjalan bersamaan, loading baru akan tertutup setelah sem
 
 Berikut semua atribut yang bisa kamu tambahkan pada tag `<ycab-loader>`:
 
-| Atribut      | Pilihan nilai                  | Default   | Fungsi                                                                 |
-| ------------ | ------------------------------ | --------- | ---------------------------------------------------------------------- |
-| `variant`    | `iserve`, `values`, `logo`     | `iserve`  | Memilih tampilan loading.                                              |
-| `theme`      | `light`, `dark`, `auto`        | `light`   | Memilih tema terang, gelap, atau mengikuti perangkat.                  |
-| `fullscreen` | –                              | –         | Menampilkan loading menutupi seluruh halaman.                          |
-| `plain`      | –                              | –         | Menghilangkan kotak kartu di belakang animasi (variant `iserve` dan `values`). |
-| `hide-label` | –                              | –         | Menyembunyikan teks di bawah animasi.                                  |
-| `label`      | teks bebas                     | `Loading` | Teks untuk pembaca layar. Pada variant `logo`, teks ini juga ditampilkan. |
-| `step-ms`    | angka dalam milidetik          | 800 (`logo`: 440) | Mengatur kecepatan animasi. Semakin kecil, semakin cepat.              |
+| Atribut      | Pilihan nilai              | Default           | Fungsi                                                                         |
+| ------------ | -------------------------- | ----------------- | ------------------------------------------------------------------------------ |
+| `variant`    | `iserve`, `values`, `logo` | `iserve`          | Memilih tampilan loading.                                                      |
+| `theme`      | `light`, `dark`, `auto`    | `light`           | Memilih tema terang, gelap, atau mengikuti perangkat.                          |
+| `fullscreen` | –                          | –                 | Menampilkan loading menutupi seluruh halaman.                                  |
+| `plain`      | –                          | –                 | Menghilangkan kotak kartu di belakang animasi (variant `iserve` dan `values`). |
+| `hide-label` | –                          | –                 | Menyembunyikan teks di bawah animasi.                                          |
+| `label`      | teks bebas                 | `Loading`         | Teks untuk pembaca layar. Pada variant `logo`, teks ini juga ditampilkan.      |
+| `step-ms`    | angka dalam milidetik      | 800 (`logo`: 440) | Mengatur kecepatan animasi. Semakin kecil, semakin cepat.                      |
 
 Atribut tanpa pilihan nilai (`fullscreen`, `plain`, `hide-label`) cukup ditulis namanya saja, contohnya:
 
@@ -392,7 +392,7 @@ Menampilkan loading selama `proses` berjalan, lalu menutupnya secara otomatis.
 
 ```js
 const users = await YCABLoader.wrap(
-  fetch("/api/users").then((res) => res.json())
+  fetch("/api/users").then((res) => res.json()),
 );
 ```
 
@@ -400,14 +400,14 @@ const users = await YCABLoader.wrap(
 
 Pilihan berikut bisa digunakan pada `show()` dan `wrap()`:
 
-| Pilihan     | Contoh nilai                  | Fungsi                              |
-| ----------- | ----------------------------- | ----------------------------------- |
-| `variant`   | `"iserve"`, `"values"`, `"logo"` | Memilih tampilan loading.        |
-| `theme`     | `"light"`, `"dark"`, `"auto"` | Memilih tema.                       |
-| `hideLabel` | `true`                        | Menyembunyikan teks.                |
-| `plain`     | `true`                        | Menghilangkan kotak kartu.          |
-| `label`     | `"Menyimpan data…"`           | Teks untuk pembaca layar.           |
-| `stepMs`    | `600`                         | Mengatur kecepatan animasi.         |
+| Pilihan     | Contoh nilai                     | Fungsi                      |
+| ----------- | -------------------------------- | --------------------------- |
+| `variant`   | `"iserve"`, `"values"`, `"logo"` | Memilih tampilan loading.   |
+| `theme`     | `"light"`, `"dark"`, `"auto"`    | Memilih tema.               |
+| `hideLabel` | `true`                           | Menyembunyikan teks.        |
+| `plain`     | `true`                           | Menghilangkan kotak kartu.  |
+| `label`     | `"Menyimpan data…"`              | Teks untuk pembaca layar.   |
+| `stepMs`    | `600`                            | Mengatur kecepatan animasi. |
 
 ---
 
@@ -425,14 +425,14 @@ ycab-loader {
 }
 ```
 
-| Variable          | Yang diubah                                   |
-| ----------------- | --------------------------------------------- |
-| `--ycab-red`      | Warna aksen (ikon dan huruf yang aktif)       |
-| `--ycab-card`     | Warna latar kartu                             |
-| `--ycab-ink`      | Warna teks di dalam kartu                     |
-| `--ycab-border`   | Warna garis tepi kartu                        |
-| `--ycab-shadow`   | Bayangan kartu                                |
-| `--ycab-backdrop` | Warna latar saat mode layar penuh             |
+| Variable          | Yang diubah                             |
+| ----------------- | --------------------------------------- |
+| `--ycab-red`      | Warna aksen (ikon dan huruf yang aktif) |
+| `--ycab-card`     | Warna latar kartu                       |
+| `--ycab-ink`      | Warna teks di dalam kartu               |
+| `--ycab-border`   | Warna garis tepi kartu                  |
+| `--ycab-shadow`   | Bayangan kartu                          |
+| `--ycab-backdrop` | Warna latar saat mode layar penuh       |
 
 ### Mengubah bentuk bagian tertentu
 
