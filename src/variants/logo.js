@@ -1,6 +1,6 @@
 VARIANTS.logo = {
   stepMs: 440,
-  steps: 7,
+  steps: 4,
   css: `
     .loader {
       display: flex;
@@ -42,12 +42,12 @@ VARIANTS.logo = {
   html(host) {
     const ornaments = [
       { src: "ornament-01-panah-rumah", left: 15.193, top: 18.325, width: 16.703, height: 16.101 },
-      { src: "ornament-02-morph-1", left: 31.897, top: 4.118, width: 20.065, height: 20.098 },
-      { src: "ornament-03-love-miring", left: 58.065, top: 3.537, width: 23.945, height: 27.092 },
-      { src: "ornament-04-love-penuh", left: 66.303, top: 31.245, width: 32.963, height: 34.385 },
-      { src: "ornament-05-love-bawah", left: 60.472, top: 71.227, width: 25.624, height: 25.463 },
-      { src: "ornament-06-buku-bawah", left: 38.404, top: 83.468, width: 19.147, height: 15.614 },
       { src: "ornament-07-buku-kiri", left: 19.657, top: 74.137, width: 16.383, height: 12.897 },
+      { src: "ornament-02-morph-1", left: 31.897, top: 4.118, width: 20.065, height: 20.098 },
+      { src: "ornament-06-buku-bawah", left: 38.404, top: 83.468, width: 19.147, height: 15.614 },
+      { src: "ornament-03-love-miring", left: 58.065, top: 3.537, width: 23.945, height: 27.092 },
+      { src: "ornament-05-love-bawah", left: 60.472, top: 71.227, width: 25.624, height: 25.463 },
+      { src: "ornament-04-love-penuh", left: 66.303, top: 31.245, width: 32.963, height: 34.385 },
     ];
     const text = (host.getAttribute("label") || "Loading…").replace(/[&<>"]/g, (c) => `&#${c.charCodeAt(0)};`);
     return `
@@ -63,9 +63,11 @@ VARIANTS.logo = {
   },
   mount(root) {
     const ornaments = [...root.querySelectorAll(".ornament")];
+    const groups = [[0, 1], [2, 3], [4, 5], [6]];
     return {
       paint(step) {
-        ornaments.forEach((node, i) => node.classList.toggle("is-active", i === step));
+        const active = new Set(groups[step] || []);
+        ornaments.forEach((node, i) => node.classList.toggle("is-active", active.has(i)));
       },
     };
   },
