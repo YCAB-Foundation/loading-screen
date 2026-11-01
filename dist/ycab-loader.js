@@ -258,10 +258,10 @@ VARIANTS.pulse = {
       border: 1.5px solid var(--ycab-red);
       border-radius: 999px;
       opacity: 0;
-      animation: ycab-pulse-ring 1.8s cubic-bezier(0.15, 0.7, 0.3, 1) infinite;
+      animation: ycab-pulse-ring 1.6s cubic-bezier(0.15, 0.7, 0.3, 1) infinite;
     }
-    .rings span:nth-child(2) { animation-delay: 0.45s; }
-    .rings span:nth-child(3) { animation-delay: 0.9s; }
+    .rings span:nth-child(2) { animation-delay: 0.4s; }
+    .rings span:nth-child(3) { animation-delay: 0.8s; }
     .logo {
       position: relative;
       z-index: 1;
@@ -269,7 +269,9 @@ VARIANTS.pulse = {
       align-items: center;
       height: clamp(2.4rem, 8vw, 3.4rem);
       width: auto;
-      animation: ycab-pulse-beat 1.6s ease-in-out infinite;
+      transform: scale(1);
+      transform-origin: center;
+      will-change: transform;
     }
     .logo img {
       display: block;
@@ -301,8 +303,9 @@ VARIANTS.pulse = {
       stroke-linejoin: round;
       stroke-dasharray: 100;
       stroke-dashoffset: 100;
-      animation: ycab-pulse-ecg 1.8s ease-in-out infinite;
+      opacity: 0.35;
       filter: drop-shadow(0 0 6px rgba(237, 28, 36, 0.55));
+      will-change: stroke-dashoffset, opacity, filter;
     }
     .label {
       margin: 0;
@@ -317,27 +320,63 @@ VARIANTS.pulse = {
       color: var(--ycab-red);
     }
     :host([data-theme="dark"]) .label { color: #a1a1aa; }
+    .sound {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      z-index: 2;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      height: 40px;
+      padding: 0;
+      border: 1px solid rgba(113, 113, 122, 0.28);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.82);
+      color: #52525b;
+      cursor: pointer;
+      box-shadow: 0 8px 20px rgba(15, 23, 42, 0.08);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+    }
+    .sound:hover {
+      color: var(--ycab-red);
+      border-color: rgba(237, 28, 36, 0.35);
+    }
+    .sound:focus-visible {
+      outline: 2px solid var(--ycab-red);
+      outline-offset: 2px;
+    }
+    :host([data-theme="dark"]) .sound {
+      background: rgba(24, 24, 27, 0.78);
+      border-color: rgba(161, 161, 170, 0.28);
+      color: #d4d4d8;
+      box-shadow: none;
+    }
+    :host([fullscreen]) .sound {
+      position: fixed;
+      top: max(20px, env(safe-area-inset-top));
+      right: max(20px, env(safe-area-inset-right));
+    }
+    .sound svg {
+      width: 18px;
+      height: 18px;
+      display: block;
+    }
+    .sound .icon-muted { display: none; }
+    .sound.is-muted .icon-on { display: none; }
+    .sound.is-muted .icon-muted { display: block; }
     @keyframes ycab-pulse-ring {
       0% { transform: scale(0.45); opacity: 0.55; }
       70% { opacity: 0.12; }
       100% { transform: scale(1.85); opacity: 0; }
     }
-    @keyframes ycab-pulse-beat {
-      0%, 100% { transform: scale(1); }
-      12% { transform: scale(1.055); }
-      20% { transform: scale(1); }
-      32% { transform: scale(1.035); }
-      42% { transform: scale(1); }
-    }
-    @keyframes ycab-pulse-ecg {
-      0% { stroke-dashoffset: 100; opacity: 0.35; }
-      35% { stroke-dashoffset: 0; opacity: 1; }
-      72% { stroke-dashoffset: 0; opacity: 1; }
-      100% { stroke-dashoffset: 0; opacity: 0.2; }
-    }
     @media (prefers-reduced-motion: reduce) {
-      .rings span, .logo, .ecg-draw { animation: none !important; }
-      .ecg-draw { stroke-dashoffset: 0; opacity: 1; }
+      .rings span { animation: none !important; }
+      .ecg-draw { stroke-dashoffset: 0; opacity: 1; filter: none; }
+      .logo { transform: none !important; }
     }
   `,
   html(host) {
@@ -347,6 +386,18 @@ VARIANTS.pulse = {
       : 'YCAB <em>Pulse</em>';
     return `
       <div class="loader">
+        <button class="sound" type="button" part="sound" aria-label="Mute sound" aria-pressed="false">
+          <svg class="icon-on" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 10v4h3l4 3V7L7 10H4z" />
+            <path d="M15.5 8.5a4.5 4.5 0 0 1 0 7" />
+            <path d="M18 6a8 8 0 0 1 0 12" />
+          </svg>
+          <svg class="icon-muted" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 10v4h3l4 3V7L7 10H4z" />
+            <path d="M16 9l5 5" />
+            <path d="M21 9l-5 5" />
+          </svg>
+        </button>
         <div class="mark" part="logo">
           <div class="rings" aria-hidden="true"><span></span><span></span><span></span></div>
           <span class="logo">
@@ -361,35 +412,122 @@ VARIANTS.pulse = {
         <p class="label" part="label">${text}</p>
       </div>`;
   },
-  mount(_root, host) {
+  mount(root, host) {
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const soundOn = !host.hasAttribute("muted") && !reduced && ASSETS["heartbeat-official"];
-    if (!soundOn) return { paint() {}, destroy() {} };
-
-    const audio = new Audio(ASSETS["heartbeat-official"]);
-    audio.preload = "auto";
-    audio.volume = 0.95;
-    let loopTimer = 0;
+    const button = root.querySelector(".sound");
+    const logo = root.querySelector(".logo");
+    const ecg = root.querySelector(".ecg-draw");
+    const canPlay = Boolean(ASSETS["heartbeat-official"]) && !reduced;
+    // Measured from heartbeat-official.mp3 and ECG path geometry
+    const LUB = 0.29;
+    const DUB = 0.57;
+    const HIGH_PEAK_OFFSET = 46;
+    let muted = host.hasAttribute("muted") || !canPlay;
+    let audio = null;
     let started = false;
     let listening = false;
+    let raf = 0;
+    let silentStarted = 0;
+
+    function lerp(a, b, t) {
+      return a + (b - a) * Math.min(1, Math.max(0, t));
+    }
+
+    function beatScale(t, at, amount, width) {
+      const d = Math.abs(t - at);
+      if (d >= width) return 1;
+      return 1 + amount * (1 - d / width);
+    }
+
+    function applyVisual(t, duration) {
+      if (!ecg || !logo || reduced) return;
+      let offset;
+      let opacity;
+      let glow;
+      if (t <= LUB) {
+        const k = t / LUB;
+        offset = lerp(100, HIGH_PEAK_OFFSET, k * k);
+        opacity = lerp(0.35, 1, k);
+        glow = lerp(6, 12, k);
+      } else if (t <= DUB) {
+        const k = (t - LUB) / (DUB - LUB);
+        offset = lerp(HIGH_PEAK_OFFSET, 40, k);
+        opacity = 1;
+        glow = lerp(12, 8, k);
+      } else {
+        const rest = Math.max(0.01, duration - DUB);
+        const k = (t - DUB) / rest;
+        offset = lerp(40, 0, Math.min(1, k * 1.35));
+        opacity = k < 0.55 ? 1 : lerp(1, 0.25, (k - 0.55) / 0.45);
+        glow = 6;
+      }
+      ecg.style.strokeDashoffset = String(offset);
+      ecg.style.opacity = String(opacity);
+      ecg.style.filter = `drop-shadow(0 0 ${glow}px rgba(237, 28, 36, 0.9))`;
+      const scale = Math.max(beatScale(t, LUB, 0.07, 0.055), beatScale(t, DUB, 0.045, 0.05));
+      logo.style.transform = `scale(${scale})`;
+    }
+
+    function syncButton() {
+      if (!button) return;
+      button.classList.toggle("is-muted", muted);
+      button.setAttribute("aria-pressed", String(muted));
+      button.setAttribute("aria-label", muted ? "Unmute sound" : "Mute sound");
+      button.hidden = !canPlay;
+    }
+
+    function tick() {
+      const duration = (audio && audio.duration) || 1.6;
+      if (!muted && audio && !audio.paused) {
+        applyVisual(audio.currentTime, duration);
+      } else {
+        const elapsed = ((performance.now() - silentStarted) / 1000) % duration;
+        applyVisual(elapsed, duration);
+      }
+      raf = requestAnimationFrame(tick);
+    }
+
+    function ensureAudio() {
+      if (audio || !canPlay) return audio;
+      audio = new Audio(ASSETS["heartbeat-official"]);
+      audio.preload = "auto";
+      audio.volume = 0.95;
+      audio.addEventListener("ended", onAudioEnded);
+      return audio;
+    }
 
     function playPulse() {
+      const node = ensureAudio();
+      if (!node || muted) return Promise.reject(new Error("muted"));
       try {
-        audio.currentTime = 0;
-        return audio.play();
-      } catch (_) {
-        return Promise.reject(_);
+        node.currentTime = 0;
+        return node.play();
+      } catch (error) {
+        return Promise.reject(error);
       }
     }
 
+    function onAudioEnded() {
+      if (muted || !started) return;
+      playPulse().catch(() => {});
+    }
+
+    function stopHeartbeat() {
+      started = false;
+      if (audio) audio.pause();
+    }
+
     function startHeartbeat() {
-      if (started) return;
-      started = true;
-      stopListening();
-      playPulse();
-      loopTimer = window.setInterval(() => {
-        playPulse().catch(() => {});
-      }, 1600);
+      if (muted || started || !canPlay) return;
+      playPulse()
+        .then(() => {
+          started = true;
+          stopListening();
+        })
+        .catch(() => {
+          started = false;
+          armFallback();
+        });
     }
 
     function stopListening() {
@@ -399,33 +537,64 @@ VARIANTS.pulse = {
       window.removeEventListener("keydown", onGesture);
     }
 
-    function onGesture() {
+    function onGesture(event) {
+      if (button && (event.target === button || button.contains(event.target))) return;
       startHeartbeat();
     }
 
     function armFallback() {
-      if (started || listening) return;
+      if (started || listening || muted) return;
       listening = true;
       window.addEventListener("pointerdown", onGesture);
       window.addEventListener("keydown", onGesture);
     }
 
-    const first = playPulse();
-    if (first && typeof first.then === "function") {
-      first.then(startHeartbeat).catch(armFallback);
-    } else {
+    function setMuted(next) {
+      const value = Boolean(next) || !canPlay;
+      if (value === muted) {
+        syncButton();
+        host.toggleAttribute("muted", muted);
+        return;
+      }
+      muted = value;
+      host.toggleAttribute("muted", muted);
+      syncButton();
+      if (muted) {
+        stopListening();
+        stopHeartbeat();
+        silentStarted = performance.now();
+        return;
+      }
+      started = false;
       startHeartbeat();
     }
 
+    syncButton();
+    silentStarted = performance.now();
+    raf = requestAnimationFrame(tick);
+    if (!muted) startHeartbeat();
+
+    function onToggle(event) {
+      event.stopPropagation();
+      setMuted(!muted);
+    }
+    if (button) button.addEventListener("click", onToggle);
+
     return {
       paint() {},
+      setMuted,
       destroy() {
+        cancelAnimationFrame(raf);
         stopListening();
-        if (loopTimer) clearInterval(loopTimer);
-        loopTimer = 0;
-        audio.pause();
-        audio.removeAttribute("src");
-        audio.load();
+        stopHeartbeat();
+        if (button) button.removeEventListener("click", onToggle);
+        if (audio) {
+          audio.removeEventListener("ended", onAudioEnded);
+          audio.pause();
+          audio.removeAttribute("src");
+          audio.load();
+          audio = null;
+        }
       },
     };
   },
@@ -654,7 +823,7 @@ function defineElement() {
 
   class YcabLoader extends HTMLElement {
     static get observedAttributes() {
-      return ["variant", "theme", "label"];
+      return ["variant", "theme", "label", "muted"];
     }
 
     constructor() {
@@ -684,7 +853,11 @@ function defineElement() {
 
     attributeChangedCallback(name, oldValue, newValue) {
       if (name === "theme") this._applyTheme();
-      else if (this._view && oldValue !== newValue) this._render();
+      else if (name === "muted" && this._view && this._view.setMuted) {
+        this._view.setMuted(this.hasAttribute("muted"));
+      } else if (this._view && oldValue !== newValue) {
+        this._render();
+      }
     }
 
     _applyTheme() {

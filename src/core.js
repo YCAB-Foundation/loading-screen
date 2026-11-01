@@ -81,7 +81,7 @@ function defineElement() {
 
   class YcabLoader extends HTMLElement {
     static get observedAttributes() {
-      return ["variant", "theme", "label"];
+      return ["variant", "theme", "label", "muted"];
     }
 
     constructor() {
@@ -111,7 +111,11 @@ function defineElement() {
 
     attributeChangedCallback(name, oldValue, newValue) {
       if (name === "theme") this._applyTheme();
-      else if (this._view && oldValue !== newValue) this._render();
+      else if (name === "muted" && this._view && this._view.setMuted) {
+        this._view.setMuted(this.hasAttribute("muted"));
+      } else if (this._view && oldValue !== newValue) {
+        this._render();
+      }
     }
 
     _applyTheme() {

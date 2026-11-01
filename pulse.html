@@ -76,6 +76,33 @@
 
     .back a { color: var(--muted); }
 
+    .controls {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      flex: none;
+    }
+
+    .sound {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 36px;
+      height: 36px;
+      padding: 0;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: #f1f3f6;
+      color: #4b5563;
+      cursor: pointer;
+    }
+
+    .sound:hover { color: var(--red); }
+    .sound svg { width: 16px; height: 16px; display: block; }
+    .sound .icon-muted { display: none; }
+    .sound.is-muted .icon-on { display: none; }
+    .sound.is-muted .icon-muted { display: block; }
+
     .seg {
       display: inline-flex;
       padding: 3px;
@@ -146,6 +173,8 @@
 
     .viewport > * { position: relative; z-index: 1; }
 
+    ycab-loader::part(sound) { display: none; }
+
     html[data-frame="1"] body {
       min-height: 0;
       padding: 0;
@@ -165,9 +194,23 @@
         <h1>YCAB Pulse</h1>
         <p class="back"><a href="index.html">Semua screen</a></p>
       </div>
-      <div class="seg" role="group" aria-label="Mode">
-        <button type="button" data-mode="light" aria-pressed="true">Light</button>
-        <button type="button" data-mode="dark" aria-pressed="false">Dark</button>
+      <div class="controls">
+        <button class="sound" id="sound" type="button" aria-label="Mute sound" aria-pressed="false">
+          <svg class="icon-on" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 10v4h3l4 3V7L7 10H4z" />
+            <path d="M15.5 8.5a4.5 4.5 0 0 1 0 7" />
+            <path d="M18 6a8 8 0 0 1 0 12" />
+          </svg>
+          <svg class="icon-muted" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 10v4h3l4 3V7L7 10H4z" />
+            <path d="M16 9l5 5" />
+            <path d="M21 9l-5 5" />
+          </svg>
+        </button>
+        <div class="seg" role="group" aria-label="Mode">
+          <button type="button" data-mode="light" aria-pressed="true">Light</button>
+          <button type="button" data-mode="dark" aria-pressed="false">Dark</button>
+        </div>
       </div>
     </header>
     <div class="viewport">
@@ -180,6 +223,7 @@
   <script>
     const screen = document.getElementById("screen");
     const loader = document.getElementById("loader");
+    const sound = document.getElementById("sound");
 
     function applyTheme(mode) {
       if (mode !== "light" && mode !== "dark") return;
@@ -190,9 +234,23 @@
       });
     }
 
+    function syncSound() {
+      const muted = loader.hasAttribute("muted");
+      sound.classList.toggle("is-muted", muted);
+      sound.setAttribute("aria-pressed", String(muted));
+      sound.setAttribute("aria-label", muted ? "Unmute sound" : "Mute sound");
+    }
+
     screen.querySelectorAll(".seg button").forEach((button) => {
       button.addEventListener("click", () => applyTheme(button.dataset.mode));
     });
+
+    sound.addEventListener("click", () => {
+      loader.toggleAttribute("muted", !loader.hasAttribute("muted"));
+      syncSound();
+    });
+
+    syncSound();
   </script>
 </body>
 </html>
