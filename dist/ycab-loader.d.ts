@@ -1,4 +1,4 @@
-export type YCABLoaderVariant = "iserve" | "values" | "logo";
+export type YCABLoaderVariant = "iserve" | "values" | "logo" | "pulse";
 export type YCABLoaderTheme = "light" | "dark" | "auto";
 
 export interface YCABLoaderOptions {
@@ -7,6 +7,7 @@ export interface YCABLoaderOptions {
   stepMs?: number;
   hideLabel?: boolean;
   plain?: boolean;
+  muted?: boolean;
   label?: string;
 }
 
@@ -29,6 +30,7 @@ interface YCABLoaderAttributes {
   fullscreen?: boolean | "";
   plain?: boolean | "";
   "hide-label"?: boolean | "";
+  muted?: boolean | "";
   label?: string;
   start?: number | string;
   class?: string;

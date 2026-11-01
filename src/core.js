@@ -153,7 +153,7 @@ function defineElement() {
 if (isBrowser) defineElement();
 
 const OPTION_ATTRS = { variant: "variant", theme: "theme", stepMs: "step-ms", label: "label" };
-const OPTION_FLAGS = { hideLabel: "hide-label", plain: "plain" };
+const OPTION_FLAGS = { hideLabel: "hide-label", plain: "plain", muted: "muted" };
 
 let overlay = null;
 let pending = 0;

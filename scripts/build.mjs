@@ -7,7 +7,7 @@ const src = join(root, "src");
 const dist = join(root, "dist");
 const read = (path) => readFileSync(join(src, path), "utf8");
 
-const MIME = { ".webp": "image/webp", ".png": "image/png", ".svg": "image/svg+xml" };
+const MIME = { ".webp": "image/webp", ".mp3": "audio/mpeg" };
 const assets = Object.fromEntries(
   readdirSync(join(src, "assets"))
     .filter((f) => MIME[extname(f)])
